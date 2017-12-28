@@ -61,7 +61,7 @@ function check() {
   var checkAllHost = Promise.all(hostArray.map(getHostInfo));
   checkAllHost.then(function(result) {
     for (var i in result) {
-      var msg = `Hey <!here>!\n Host \`${result[i].hostname}\`\n`;
+      var msg = `Hey <!here>!\n Host \`${result[i].hostname}\` is under high load!\n`;
       var warning = 0;
       if (result[i].cpuUsage > cpuLimit) {
         msg += `The avg CPU usage in last 1 min is over \`${cpuLimit}%\`, now usage \`${result[i].cpuUsage}%\`!\n`;
