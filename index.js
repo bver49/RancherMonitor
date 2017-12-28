@@ -99,7 +99,7 @@ function check() {
         }
       } else {
         if (notifyList[result[i].hostid] == 1) {
-          if (slackApi && sendResolve) sendResolveMsg(msg);
+          if (slackApi && sendResolve) sendSlackMsg(msg);
           notifyList[result[i].hostid] = 0;
         }
       }
