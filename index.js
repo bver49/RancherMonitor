@@ -61,7 +61,7 @@ function check() {
   var checkAllHost = Promise.all(hostArray.map(getHostInfo));
   checkAllHost.then(function(result) {
     for (var i in result) {
-      var msg = `Hey <!here>!\n Host \`${result[i].hostname}\` is under high load!\n`;
+      var msg = `Hey <!here>!\n Host \`${result[i].hostname} is under high load!\`\n`;
       var warning = 0;
       if (result[i].cpuUsage > cpuLimit) {
         msg += `The avg CPU usage in last 1 min is over \`${cpuLimit}%\`, now usage \`${result[i].cpuUsage}%\`!\n`;
@@ -75,7 +75,7 @@ function check() {
         msg += `Disk usage over \`${diskLimit}%\`, now usage \`${result[i].diskUsage}%\`!\n`;
         warning = 1;
       }
-      if(warning) sendSlackMsg(msg);
+      if(warning && slackApi) sendSlackMsg(msg);
     }
   }).catch(function(err) {
     console.log(err);
@@ -89,7 +89,7 @@ function sendSlackMsg(msg) {
 }
 
 console.log(options);
-if (!key || !secret || !envId || !slackApi || !rancherHost) {
+if (!key || !secret || !envId || !rancherHost) {
   console.log('缺少參數!');
 } else {
   new CronJob({
