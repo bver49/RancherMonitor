@@ -8,6 +8,7 @@ var envId = process.env.ENVID;
 var slackApi = process.env.SLACKAPI;
 var sendResolve = (process.env.SENDRESOLVE) ? (process.env.SENDRESOLVE) : 0;
 var log = (process.env.LOG) ? (process.env.LOG) : 0;
+var checkTimes =(process.env.CHECKTIMES) ? (process.env.CHECKTIMES) : 2;
 var apiVersion = (process.env.APIVERSION) ? (process.env.APIVERSION) : 'v2-beta';
 var hostList = (process.env.HOSTLIST) ? (process.env.HOSTLIST) : '';
 var hostArray = (hostList && hostList != '') ? hostList.split(',') : [];
@@ -93,15 +94,15 @@ function check() {
       }
       if (log) console.log(result[i]);
       if (warning) {
-        if (notifyList[result[i].hostid] == 0) {
-          if (slackApi) sendSlackMsg(warnMsg);
-          notifyList[result[i].hostid] = 1;
+        notifyList[result[i].hostid] += 1;
+        if ((notifyList[result[i].hostid] == checkTimes) && slackApi) {
+          sendSlackMsg(warnMsg);
         }
       } else {
-        if (notifyList[result[i].hostid] == 1) {
-          if (slackApi && sendResolve) sendSlackMsg(msg);
-          notifyList[result[i].hostid] = 0;
+        if (notifyList[result[i].hostid] >= checkTimes && slackApi && sendResolve) {
+          sendSlackMsg(msg);
         }
+        notifyList[result[i].hostid] = 0;
       }
     }
   }).catch(function(err) {
