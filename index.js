@@ -8,7 +8,7 @@ var envId = process.env.ENVID;
 var slackApi = process.env.SLACKAPI;
 var sendResolve = (process.env.SENDRESOLVE) ? (process.env.SENDRESOLVE) : 0;
 var log = (process.env.LOG) ? (process.env.LOG) : 0;
-var checkTimes =(process.env.CHECKTIMES) ? (process.env.CHECKTIMES) : 3;
+var checkTimes = (process.env.CHECKTIMES) ? (process.env.CHECKTIMES) : 3;
 var apiVersion = (process.env.APIVERSION) ? (process.env.APIVERSION) : 'v2-beta';
 var hostList = (process.env.HOSTLIST) ? (process.env.HOSTLIST) : '';
 var hostArray = (hostList && hostList != '') ? hostList.split(',') : [];
@@ -29,9 +29,9 @@ var options = {
   memLimit: memLimit,
   diskLimit: diskLimit,
   cronTime: cronTime,
-  log:log,
-  sendResolve:sendResolve,
-  checkTimes:checkTimes
+  log: log,
+  sendResolve: sendResolve,
+  checkTimes: checkTimes
 }
 
 var api = axios.create({
@@ -42,23 +42,28 @@ var api = axios.create({
   }
 });
 
-function getHostInfo(hostid) {
+function getHostInfo() {
   return new Promise(function(resolve, reject) {
-    api.get(`/${hostid}`).then(function(res) {
-      var hostid = res.data.id;
-      var hostname = res.data.hostname;
-      var mem = res.data.info.memoryInfo;
-      var disk = res.data.info.diskInfo.mountPoints['/dev/sda1'];
-      var cpu = res.data.info.cpuInfo;
-      var diskUsage = disk.percentage.toFixed(2);
-      var memUsage = ((mem.active / mem.memTotal) * 100).toFixed(2);
-      var cpuUsage = (cpu.cpuCoresPercentages[0]).toFixed(2);
-      var result = {
-        hostid: hostid,
-        hostname: hostname,
-        cpuUsage: cpuUsage,
-        memUsage: memUsage,
-        diskUsage: diskUsage
+    api.get().then(function(res) {
+      var hostsData = res.data.data;
+      var result = [];
+      for (var i in hostsData) {
+        var hostid = hostsData[i].id;
+        var hostname = hostsData[i].hostname;
+        var mem = hostsData[i].info.memoryInfo;
+        var disk = hostsData[i].info.diskInfo.mountPoints['/dev/sda1'];
+        var cpu = hostsData[i].info.cpuInfo;
+        var diskUsage = disk.percentage.toFixed(2);
+        var memUsage = ((mem.active / mem.memTotal) * 100).toFixed(2);
+        var cpuUsage = (cpu.cpuCoresPercentages[0]).toFixed(2);
+        var hostInfo = {
+          hostid: hostid,
+          hostname: hostname,
+          cpuUsage: cpuUsage,
+          memUsage: memUsage,
+          diskUsage: diskUsage
+        }
+        result.push(hostInfo);
       }
       resolve(result);
     }).catch(function(err) {
