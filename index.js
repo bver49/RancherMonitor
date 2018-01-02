@@ -55,7 +55,7 @@ function getHostInfo() {
         var cpu = hostsData[i].info.cpuInfo;
         var diskUsage = disk.percentage.toFixed(2);
         var memUsage = ((mem.active / mem.memTotal) * 100).toFixed(2);
-        var cpuUsage = (cpu.cpuCoresPercentages[0]).toFixed(2);
+        var cpuUsage = ((cpu.loadAvg[0]/cpu.count)*100).toFixed(2);
         var hostInfo = {
           hostid: hostid,
           hostname: hostname,
