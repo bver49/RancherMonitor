@@ -8,7 +8,7 @@ var envId = process.env.ENVID;
 var slackApi = process.env.SLACKAPI;
 var sendResolve = (process.env.SENDRESOLVE) ? (process.env.SENDRESOLVE) : 0;
 var log = (process.env.LOG) ? (process.env.LOG) : 0;
-var checkTimes =(process.env.CHECKTIMES) ? (process.env.CHECKTIMES) : 2;
+var checkTimes =(process.env.CHECKTIMES) ? (process.env.CHECKTIMES) : 3;
 var apiVersion = (process.env.APIVERSION) ? (process.env.APIVERSION) : 'v2-beta';
 var hostList = (process.env.HOSTLIST) ? (process.env.HOSTLIST) : '';
 var hostArray = (hostList && hostList != '') ? hostList.split(',') : [];
@@ -30,15 +30,12 @@ var options = {
   diskLimit: diskLimit,
   cronTime: cronTime,
   log:log,
-  sendResolve:sendResolve
-}
-
-for (var i in hostArray) {
-  notifyList[hostArray[i]] = 0;
+  sendResolve:sendResolve,
+  checkTimes:checkTimes
 }
 
 var api = axios.create({
-  baseURL: `${rancherHost}/${apiVersion}/projects/${envId}/hosts/`,
+  baseURL: `${rancherHost}/${apiVersion}/projects/${envId}/hosts`,
   headers: {
     'cache-control': 'no-cache',
     'Authorization': token
@@ -71,8 +68,7 @@ function getHostInfo(hostid) {
 }
 
 function check() {
-  var checkAllHost = Promise.all(hostArray.map(getHostInfo));
-  checkAllHost.then(function(result) {
+  getHostInfo().then(function(result) {
     for (var i in result) {
       var warnMsg = `Hey <!here>!\n Host \`${result[i].hostname}\` is under high load!\n`;
       var warning = 0;
@@ -116,7 +112,12 @@ function sendSlackMsg(msg) {
   });
 }
 
+for (var i in hostArray) {
+  notifyList[hostArray[i]] = 0;
+}
+
 console.log(options);
+
 if (!key || !secret || !envId || !rancherHost) {
   console.log('缺少參數!');
 } else {
