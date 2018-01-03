@@ -55,7 +55,7 @@ function getHostInfo() {
         var cpu = hostsData[i].info.cpuInfo;
         var diskUsage = disk.percentage.toFixed(2);
         var memUsage = ((mem.active / mem.memTotal) * 100).toFixed(2);
-        var cpuUsage = ((cpu.loadAvg[0]/cpu.count)*100).toFixed(2);
+        var cpuUsage = ((cpu.loadAvg[1]/cpu.count)*100).toFixed(2);
         var hostInfo = {
           hostid: hostid,
           hostname: hostname,
@@ -78,11 +78,11 @@ function check() {
       var warnMsg = `Hey <!here>!\n Host \`${result[i].hostname}\` is under high load!\n`;
       var warning = 0;
       var msg = `Hey <!here>!\n Host \`${result[i].hostname}\` back to normal!\n`;
-      msg += `The max CPU usage in last 1 min is \`${result[i].cpuUsage}%\`!\n`;
+      msg += `The CPU loading in last 5 min is \`${result[i].cpuUsage}%\`!\n`;
       msg += `The max Memory usage in last 1 min is \`${result[i].memUsage}%\`!\n`;
       msg += `Disk usage is \`${result[i].diskUsage}%\`!`;
       if (result[i].cpuUsage > cpuLimit) {
-        warnMsg += `The max CPU usage in last 1 min is over \`${cpuLimit}%\`, value is \`${result[i].cpuUsage}%\`!\n`;
+        warnMsg += `The CPU loading in last 5 min is over \`${cpuLimit}%\`, value is \`${result[i].cpuUsage}%\`!\n`;
         warning = 1;
       }
       if (result[i].memUsage > memLimit) {
