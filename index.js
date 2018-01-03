@@ -8,13 +8,13 @@ var envId = process.env.ENVID;
 var slackApi = process.env.SLACKAPI;
 var sendResolve = (process.env.SENDRESOLVE) ? (process.env.SENDRESOLVE) : 0;
 var log = (process.env.LOG) ? (process.env.LOG) : 0;
-var checkTimes = (process.env.CHECKTIMES) ? (process.env.CHECKTIMES) : 3;
+var checkTimes = (process.env.CHECKTIMES) ? (parseInt(process.env.CHECKTIMES)) : 3;
 var apiVersion = (process.env.APIVERSION) ? (process.env.APIVERSION) : 'v2-beta';
 var hostList = (process.env.HOSTLIST) ? (process.env.HOSTLIST) : '';
 var hostArray = (hostList && hostList != '') ? hostList.split(',') : [];
-var cpuLimit = (process.env.CPULIMIT) ? (process.env.CPULIMIT) : 90;
-var memLimit = (process.env.MEMLIMIT) ? (process.env.MEMLIMIT) : 90;
-var diskLimit = (process.env.DISKLIMIT) ? (process.env.DISKLIMIT) : 90;
+var cpuLimit = (process.env.CPULIMIT) ? (parseInt(process.env.CPULIMIT)) : 90;
+var memLimit = (process.env.MEMLIMIT) ? (parseInt(process.env.MEMLIMIT)) : 90;
+var diskLimit = (process.env.DISKLIMIT) ? (parseInt(process.env.DISKLIMIT)) : 90;
 var cronTime = (process.env.CRONTIME) ? (process.env.CRONTIME) : '1 * * * * *';
 var notifyList = {};
 
@@ -59,9 +59,9 @@ function getHostInfo() {
         var hostInfo = {
           hostid: hostid,
           hostname: hostname,
-          cpuUsage: cpuUsage,
-          memUsage: memUsage,
-          diskUsage: diskUsage
+          cpuUsage: parseFloat(cpuUsage),
+          memUsage: parseFloat(memUsage),
+          diskUsage: parseFloat(diskUsage)
         }
         result.push(hostInfo);
       }
